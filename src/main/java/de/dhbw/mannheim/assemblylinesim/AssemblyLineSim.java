@@ -96,9 +96,9 @@ public class AssemblyLineSim {
             Connection connection = factory.newConnection();
             Channel channel = connection.createChannel();
 
-            channel.exchangeDeclare(ErpSimulator.MACHINE_ORDER_QUEUE_NAME, "fanout");
+            channel.exchangeDeclare(ErpSimulator.MACHINE_ORDER_EXCHANGE_NAME, "fanout");
             String queueName = channel.queueDeclare().getQueue();
-            channel.queueBind(queueName, ErpSimulator.MACHINE_ORDER_QUEUE_NAME, "");
+            channel.queueBind(queueName, ErpSimulator.MACHINE_ORDER_EXCHANGE_NAME, "");
 
             consumer = new QueueingConsumer(channel);
             channel.basicConsume(queueName, true, consumer);
