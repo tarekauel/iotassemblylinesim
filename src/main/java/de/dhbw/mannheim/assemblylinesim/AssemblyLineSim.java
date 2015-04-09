@@ -37,6 +37,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class AssemblyLineSim {
 
+    public static void main(String[] args) throws Exception {
+        new AssemblyLineSim("localhost", 1000);
+    }
+
     private final static XStream xstream = new XStream();
 
     private final static String REPORT_EXCHANGE_NAME = "REPORT_EXCHANGE";
@@ -45,13 +49,11 @@ public class AssemblyLineSim {
     private final Channel channel;
     private boolean nextCanStart = true;
 
-    public static void main(String[] args) throws Exception {
-        new AssemblyLineSim("localhost");
-    }
+    private final double speedUpFactor;
 
-    private AssemblyLineSim(String hostname) throws IOException {
+    private AssemblyLineSim(String hostname, double speedUpFactor) throws IOException {
         (new RabbitListener(hostname)).start();
-
+        this.speedUpFactor = speedUpFactor;
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(hostname);
         Connection connection = factory.newConnection();
@@ -138,22 +140,22 @@ public class AssemblyLineSim {
             try {
                 System.out.println(machineOrder.getId() + " started manufacturing");
                 Report r = new Report(machineOrder.getId());
-                Thread.sleep(1000 + getRandomTime(20));
+                Thread.sleep((long) ((1000 / speedUpFactor) + getRandomTime(20 / speedUpFactor)));
 
                 r.passedLightBarrier();
                 System.out.println(machineOrder.getId() + " passed first light barrier");
-                Thread.sleep(4250 + getRandomTime(450));
+                Thread.sleep((long) (4250 / speedUpFactor + getRandomTime(450 / speedUpFactor)));
 
                 r.passedLightBarrier();
                 System.out.println(machineOrder.getId() + " passed second light barrier");
                 r.setSpeedDrillerRPM((int) (9200 + Math.random() * 2000));
-                Thread.sleep(7100 + getRandomTime(1000));
+                Thread.sleep((long) (7100 / speedUpFactor + getRandomTime(1000 / speedUpFactor)));
 
                 r.passedLightBarrier();
                 System.out.println(machineOrder.getId() + " passed third light barrier");
                 r.setSpeedShaperRPM((int) (15000 + Math.random() * 1000));
                 nextMayStart();
-                Thread.sleep(9500 + getRandomTime(3000));
+                Thread.sleep((long) (9500 / speedUpFactor + getRandomTime(3000 / speedUpFactor)));
 
                 r.passedLightBarrier();
                 System.out.println(machineOrder.getId() + " passed fourth light barrier");
@@ -164,7 +166,7 @@ public class AssemblyLineSim {
             }
         }
 
-        private long getRandomTime(int range) {
+        private long getRandomTime(double range) {
             double diff = rand.nextGaussian();
             if (diff < -1 ) {
                 diff = -1;
