@@ -6,7 +6,7 @@
 
     <groupId>de.dhbw.mannheim</groupId>
     <artifactId>assemblylinesim</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
 
@@ -60,7 +60,7 @@
                     <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory> <!-- matches distribution management repository url above -->
                     <branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
                     <includes><include>**/*</include></includes>
-                    <repositoryName>ioterpsimulator</repositoryName>      <!-- github repo name -->
+                    <repositoryName>iotassemblylinesim</repositoryName>      <!-- github repo name -->
                     <repositoryOwner>tarekauel</repositoryOwner>    <!-- github username  -->
                 </configuration>
                 <executions>

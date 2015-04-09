@@ -37,13 +37,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class AssemblyLineSim {
 
-    public static void main(String[] args) throws Exception {
-        new AssemblyLineSim("localhost", 1000);
-    }
+    public final static String REPORT_EXCHANGE_NAME = "REPORT_EXCHANGE";
 
     private final static XStream xstream = new XStream();
 
-    private final static String REPORT_EXCHANGE_NAME = "REPORT_EXCHANGE";
+    public static void main(String[] args) throws Exception {
+        new AssemblyLineSim("localhost", 10);
+    }
 
     Queue<MachineOrder> tasks = new ConcurrentLinkedQueue<MachineOrder>();
     private final Channel channel;
