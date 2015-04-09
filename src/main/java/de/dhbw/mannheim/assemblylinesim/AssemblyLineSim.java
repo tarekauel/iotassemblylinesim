@@ -124,6 +124,8 @@ public class AssemblyLineSim {
 
     class CycleSimulator extends Thread {
 
+        private final Random rand = new Random();
+
         private final MachineOrder machineOrder;
 
         public CycleSimulator(MachineOrder machineOrder) {
@@ -134,26 +136,44 @@ public class AssemblyLineSim {
         public void run() {
             super.run();
             try {
-                System.out.println("Start manufacturing for " + machineOrder.getId());
-                Report r = new Report();
-                Random rand = new Random();
-                Thread.sleep(4000 + (int) (rand.nextGaussian() * 2000));
-                r.passedLightBarrier();
-                Thread.sleep(4000 + (int) (rand.nextGaussian() * 2000));
-                r.passedLightBarrier();
+                System.out.println(machineOrder.getId() + " started manufacturing");
+                Report r = new Report(machineOrder.getId());
+                Thread.sleep(1000 + getRandomTime(200));
 
-                // At this point the next can start
+                r.passedLightBarrier();
+                System.out.println(machineOrder.getId() + " passed first light barrier");
+                Thread.sleep(4500 + getRandomTime(200));
+
+                r.passedLightBarrier();
+                System.out.println(machineOrder.getId() + " passed second light barrier");
+                r.setSpeedDrillerRPM((int) (20 * Math.random() * 5));
+                Thread.sleep(7600 + getRandomTime(200));
+
+                r.passedLightBarrier();
+                System.out.println(machineOrder.getId() + " passed third light barrier");
+                r.setSpeedShaperRPM((int) (30 * Math.random() * 10));
                 nextMayStart();
+                Thread.sleep(11000 + getRandomTime(200));
 
-                Thread.sleep(4000 + (int) (rand.nextGaussian() * 2000));
                 r.passedLightBarrier();
-                Thread.sleep(4000 + (int) (rand.nextGaussian() * 2000));
-                r.passedLightBarrier();
+                System.out.println(machineOrder.getId() + " passed fourth light barrier");
                 finishedTask(r);
                 System.out.println("Finished manufacturing for " + machineOrder.getId());
             } catch (InterruptedException e) {
                 // ignore
             }
+        }
+
+        private long getRandomTime(int range) {
+            double diff = rand.nextGaussian();
+            if (diff < -1 ) {
+                diff = -1;
+            } else if (diff > 1) {
+                diff = 1;
+            }
+            diff *= range;
+
+            return (long) diff;
         }
     }
 

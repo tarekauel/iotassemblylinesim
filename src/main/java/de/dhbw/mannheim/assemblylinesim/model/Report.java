@@ -27,6 +27,8 @@ import java.util.Date;
  */
 public class Report {
 
+    private final String machineOrderId;
+
     private final Timestamp startTime;
 
     private final ArrayList<Timestamp> passedLightBarrier = new ArrayList<>();
@@ -34,8 +36,9 @@ public class Report {
     private double speedShaperRPM;
     private double speedDrillerRPM;
 
-    public Report() {
-        startTime = new Timestamp(new Date().getTime());
+    public Report(String machineOrderId) {
+        this.machineOrderId = machineOrderId;
+        this.startTime = new Timestamp(new Date().getTime());
     }
 
     public Timestamp getStartTime() {
