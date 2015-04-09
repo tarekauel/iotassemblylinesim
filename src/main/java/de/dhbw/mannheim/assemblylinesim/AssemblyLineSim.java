@@ -138,27 +138,27 @@ public class AssemblyLineSim {
             try {
                 System.out.println(machineOrder.getId() + " started manufacturing");
                 Report r = new Report(machineOrder.getId());
-                Thread.sleep(1000 + getRandomTime(200));
+                Thread.sleep(1000 + getRandomTime(20));
 
                 r.passedLightBarrier();
                 System.out.println(machineOrder.getId() + " passed first light barrier");
-                Thread.sleep(4500 + getRandomTime(200));
+                Thread.sleep(4250 + getRandomTime(450));
 
                 r.passedLightBarrier();
                 System.out.println(machineOrder.getId() + " passed second light barrier");
-                r.setSpeedDrillerRPM((int) (20 * Math.random() * 5));
-                Thread.sleep(7600 + getRandomTime(200));
+                r.setSpeedDrillerRPM((int) (9200 + Math.random() * 2000));
+                Thread.sleep(7100 + getRandomTime(1000));
 
                 r.passedLightBarrier();
                 System.out.println(machineOrder.getId() + " passed third light barrier");
-                r.setSpeedShaperRPM((int) (30 * Math.random() * 10));
+                r.setSpeedShaperRPM((int) (15000 + Math.random() * 1000));
                 nextMayStart();
-                Thread.sleep(11000 + getRandomTime(200));
+                Thread.sleep(9500 + getRandomTime(3000));
 
                 r.passedLightBarrier();
                 System.out.println(machineOrder.getId() + " passed fourth light barrier");
                 finishedTask(r);
-                System.out.println("Finished manufacturing for " + machineOrder.getId());
+                System.out.println(machineOrder.getId() + " finished manufacturing");
             } catch (InterruptedException e) {
                 // ignore
             }
