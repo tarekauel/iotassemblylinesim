@@ -41,6 +41,10 @@ public class Report {
         this.startTime = new Timestamp(new Date().getTime());
     }
 
+    public String getMachineOrderId() {
+        return machineOrderId;
+    }
+
     public Timestamp getStartTime() {
         return startTime;
     }

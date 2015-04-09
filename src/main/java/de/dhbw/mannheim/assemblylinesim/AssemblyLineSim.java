@@ -37,6 +37,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class AssemblyLineSim {
 
+    // Name of rabbitmq exchange
     public final static String REPORT_EXCHANGE_NAME = "REPORT_EXCHANGE";
 
     private final static XStream xstream = new XStream();
@@ -45,12 +46,25 @@ public class AssemblyLineSim {
         new AssemblyLineSim("localhost", 10);
     }
 
+    // queue for the next machine order for the assembly line
     Queue<MachineOrder> tasks = new ConcurrentLinkedQueue<MachineOrder>();
+
+    // channel to connect to rabbitmq
     private final Channel channel;
+
+    // identifies if start of assembly line is empty
     private boolean nextCanStart = true;
 
+    // speed up factor allows to speed up simulation
+    // e.g. 10 --> 10 times faster
     private final double speedUpFactor;
 
+    /**
+     *
+     * @param hostname of the rabbitMq
+     * @param speedUpFactor speed up factor to speed up simulation, e.g. 10 --> 10 times faster
+     * @throws IOException is thrown if the connection to rabbitmq fails
+     */
     private AssemblyLineSim(String hostname, double speedUpFactor) throws IOException {
         (new RabbitListener(hostname)).start();
         this.speedUpFactor = speedUpFactor;
@@ -61,11 +75,22 @@ public class AssemblyLineSim {
         channel.exchangeDeclare(REPORT_EXCHANGE_NAME, "fanout");
     }
 
+    /**
+     * Called if new task for assembly line is received
+     *
+     * @param mo received machine order
+     */
     private synchronized void receivedOrder(MachineOrder mo) {
         tasks.offer(mo);
         startNext();
     }
 
+    /**
+     * Called if simulation finished a task. Send the report to the rabbitmq
+     * exchange
+     *
+     * @param r the generated report
+     */
     private synchronized void finishedTask(Report r) {
         try {
             String message = xstream.toXML(r);
@@ -75,11 +100,19 @@ public class AssemblyLineSim {
         }
     }
 
+    /**
+     * Called if someone left the first part of the assembly line. Sets
+     * the <code>nextCanStart</code> to <code>true</code> and starts the
+     * next machine order
+     */
     private synchronized void nextMayStart() {
         nextCanStart = true;
         startNext();
     }
 
+    /**
+     * Starts the next machine order if possible
+     */
     private synchronized void startNext() {
         if (nextCanStart && tasks.size() > 0) {
             nextCanStart = false;
@@ -88,6 +121,9 @@ public class AssemblyLineSim {
         }
     }
 
+    /**
+     * Listener for new machine orders in the rabbitmq
+     */
     class RabbitListener extends Thread {
 
         QueueingConsumer consumer;
@@ -124,6 +160,9 @@ public class AssemblyLineSim {
         }
     }
 
+    /**
+     * Simulates one cycle of the assembly line
+     */
     class CycleSimulator extends Thread {
 
         private final Random rand = new Random();
